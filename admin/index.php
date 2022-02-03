@@ -2,7 +2,7 @@
 session_start();
 require '../config/config.php';
 if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
-  header("location: login.php?error=1");
+  header("location: login.php?error=login");
 }
 
 ?>
@@ -51,6 +51,7 @@ if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
                   $statement->execute();
                   $result = $statement->fetchALl();
                 } else {
+                  ////find Search value from search bar
                   ////pdo section
                   $searchKey = $_POST['search'];
                   $statement = $pdo->prepare("SELECT * FROM posts WHERE title LIKE '%$searchKey%' ORDER BY id desc");
@@ -64,7 +65,7 @@ if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
                   $result = $statement->fetchALl();
                 }
                 if ($result) :
-                  $i =1;
+                  $i = 1;
                   foreach ($result as $value) :
                 ?>
                     <tr>
