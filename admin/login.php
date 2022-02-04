@@ -10,10 +10,11 @@ if ($_POST) {
     $statement->execute();
     $user = $statement->fetch(PDO::FETCH_ASSOC);
     if ($user) {
-        if ($user['password'] == $password) {
+        if ($user['password'] == $password && $user['role'] == 1) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
             $_SESSION['logged_in'] = time();
+            $_SESSION['user_role'] = $user['role'];
             header("location: index.php");
             die();
         } else {
@@ -59,9 +60,9 @@ if ($_POST) {
                     echo "Email does not exist!!";
                 } ?>
                 <?php if ($_GET['error'] == 'password') {
-                    echo "Incorrect Password!!";
+                    echo "Incorrect Password! Or Maybe you don't have access to login admin panel";
                 } ?>
-                 <?php if ($_GET['error'] == 'login') {
+                <?php if ($_GET['error'] == 'login') {
                     echo "Login Please!";
                 } ?>
             </div>
