@@ -1,0 +1,88 @@
+<?php
+session_start();
+require '../config/config.php';
+if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
+    header("location: login.php");
+}
+if ($_POST) {
+    if ($_POST['admin']) {
+        $role = 1;
+    } else {
+        $role = 0;
+    }
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    $statement = $pdo->prepare("SELECT * FROM users WHERE email=:email");
+    $statement->execute([':email' => $email]);
+    $user = $statement->fetchAll();
+    if ($user) {
+        echo "<script>alert('Email already exist! Try again.');window.location.href='manageUsers.php'</script>";
+    } else {
+        $statement = $pdo->prepare("INSERT INTO users(name,email,password,role) VALUES (:name,:email,:password,:role)");
+        $result = $statement->execute([
+            ':name' => $name,
+            ':email' => $email,
+            ':password' => $password,
+            ':role' => $role
+        ]);
+        if ($result) {
+            echo "<script>alert('Successfully added User');window.location.href='manageUsers.php'</script>";
+        }
+    }
+}
+
+?>
+
+<?php include 'header.php'; ?>
+
+<!-- Main content -->
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Create New User</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <form action="createUser.php" class="" method="POST" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label type="text" class="form-label">Name</label>
+                                <input type="text" class="form-control" name='name' required>
+                            </div>
+                            <div class="form-group">
+                                <label type="text" class="form-label">E-mail</label>
+                                <input type="email" class="form-control" name='email' required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Password</label>
+                                <input type="password" name="password" class="form-control" required>
+                            </div>
+                            <div class="form-check form-group">
+                                <input type="checkbox" class="form-check-input" name="admin" value="1">
+                                <label class="form-check-label">Admin</label>
+                            </div>
+                            <br><br>
+                            <div class="form-group">
+                                <input type="submit" value="SUBMIT" class="btn btn-primary">
+                                <a href="manageUsers.php" type="button" class="btn btn-default">Back</a>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col-md-6 -->
+        </div>
+        <!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+
+<?php include 'footer.html' ?>

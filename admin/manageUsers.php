@@ -5,11 +5,8 @@ if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
     header("location: login.php?error=login");
 }
 
-$statement = $pdo->prepare("SELECT * FROM users");
-$statement->execute();
-$result = $statement->fetchAll(PDO::FETCH_OBJ);
 ?>
-<?php include 'header.html' ?>
+<?php include 'header.php' ?>
 <!-- Main content -->
 <div class="content">
     <div class="container-fluid">
@@ -21,18 +18,31 @@ $result = $statement->fetchAll(PDO::FETCH_OBJ);
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
+                        <a href="createUser.php" class="btn btn-success">Create User</a><br><br>
                         <table class="table table-striped table-dark">
                             <thead>
                                 <tr>
-                                    <th scope="col">Id</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">E-mail</th>
-                                    <th scope="col">Role</th>
-                                    <th scope="col">Actions</th>
+                                    <th >Id</th>
+                                    <th >Name</th>
+                                    <th >E-mail</th>
+                                    <th >Role</th>
+                                    <th style="width: 30%">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php if ($result) :
+                                <?php
+                                if (empty($_POST['search'])) {
+                                    $statement = $pdo->prepare("SELECT * FROM users");
+                                    $statement->execute();
+                                    $result = $statement->fetchAll(PDO::FETCH_OBJ);
+                                } else {
+                                    $searchKey = $_POST['search'];
+                                    $statement = $pdo->prepare("SELECT * FROM users WHERE name LIKE '%$searchKey%'");
+                                    $statement->execute();
+                                    $result = $statement->fetchAll(PDO::FETCH_OBJ);
+                                }
+
+                                if ($result) :
                                     foreach ($result as $user) : ?>
                                         <tr>
                                             <th scope="row"><?= $user->id ?></th>
@@ -44,12 +54,13 @@ $result = $statement->fetchAll(PDO::FETCH_OBJ);
                                                     echo "User";
                                                 }
                                                 ?></td>
-                                            <td><?php if($_SESSION['user_id']==$user->id){
-                                                echo "###";
-                                                }else{?>
-                                                <a href="changeRole.php?id=<?= $user->id ?>& role=<?= $user->role ?>" class="btn btn-sm btn-primary">Change Role</a>
-                                                <a href="deleteUser.php" class="btn btn-sm btn-danger">Delete</a>
-                                                <?php }?>
+                                            <td><?php if ($_SESSION['user_id'] == $user->id) {
+                                                    echo "###";
+                                                } else { ?>
+                                                    <a href="changeRole.php?id=<?= $user->id ?>& role=<?= $user->role ?>" onclick="return confirm('Are you sure you want to change user\'s role?')" class="btn btn-sm btn-primary">Role</a>
+                                                    <a href="editUser.php?id=<?= $user->id ?>" class="btn btn-sm btn-warning">Edit</a>
+                                                    <a href="deleteUser.php?id=<?= $user->id ?>" onclick="return confirm('Are you sure you want to delete?')" class="btn btn-sm btn-danger">Delete</a>
+                                                <?php } ?>
                                             </td>
                                         </tr>
                                 <?php endforeach;

@@ -6,6 +6,11 @@ if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
 }
 //fetch blog
 $id = $_GET['id'];
+if (isset($_GET['pageNo'])) {
+    $pageNo = $_GET['pageNo'];
+} else {
+    $pageNo = 1;
+}
 $statement = $pdo->prepare("SELECT * FROM posts WHERE id=:id");
 $statement->execute([':id' => $id]);
 $result = $statement->fetch(PDO::FETCH_ASSOC);
@@ -36,7 +41,7 @@ if ($_POST) {
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>AdminLTE 3 | Widgets</title>
+    <title>Blog Details</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Font Awesome -->
@@ -83,6 +88,9 @@ if ($_POST) {
                                         ":auth_id" => $authId
                                     ]);
                                     $authorName = $authstatement->fetch(PDO::FETCH_OBJ);
+                                    if (empty($authorName)) {
+                                        continue;
+                                    }
                                 ?>
                                     <div class="card-comment">
                                         <div class="comment-text" style="margin-left: 0 !important;">
@@ -112,7 +120,7 @@ if ($_POST) {
                     <!-- /.col -->
                 </div>
                 <!-- /.row -->
-                <a href="index.php" class="btn btn-default">Back</a><br><br>
+                <a href="index.php?pageNo=<?= ($pageNo) ? $pageNo : null ?>" class="btn btn-default">Back</a><br><br>
             </section>
             <!-- /.content -->
 

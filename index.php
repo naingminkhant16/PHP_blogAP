@@ -18,7 +18,7 @@ $offset = ($pageNo - 1) * $numsOfPosts;
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>AdminLTE 3 | Widgets</title>
+    <title>Blogs</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Font Awesome -->
@@ -32,11 +32,11 @@ $offset = ($pageNo - 1) * $numsOfPosts;
 </head>
 
 <body class="hold-transition sidebar-mini" style="background-color: #eee;">
-    <div class="">
+    <div class="wrapper">
         <!-- Navbar -->
 
         <!-- Content Wrapper. Contains page content -->
-        <div class="">
+        <div class="content-wrapper" style="margin-left: 0 !important;">
             <!-- Content Header (Page header) -->
             <section class="content-header">
                 <div class="container-fluid text-center">
@@ -55,7 +55,7 @@ $offset = ($pageNo - 1) * $numsOfPosts;
                     $statement = $pdo->prepare("SELECT * FROM posts LIMIT $offset,$numsOfPosts");
                     $statement->execute();
                     $result = $statement->fetchAll(PDO::FETCH_ASSOC);
-                 
+
                     if ($result) :
                         foreach ($result as $value) :
                     ?>
@@ -64,12 +64,12 @@ $offset = ($pageNo - 1) * $numsOfPosts;
                                 <div class="card card-widget">
                                     <div class="card-header">
                                         <div class="card-title" style="float: none;">
-                                            <h4 class="text-center"><a style="color:#272727" href="blogDetail.php?id=<?= $value['id'] ?>"><?= $value['title'] ?></a></h4>
+                                            <h4 class="text-center"><a style="color:#272727" href="blogDetail.php?id=<?= $value['id'] ?>&pageNo=<?= $pageNo ?>"><?= $value['title'] ?></a></h4>
                                         </div>
                                     </div>
                                     <div class="card-body">
-                                        <a href="blogDetail.php?id=<?= $value['id'] ?>"><img class="img-fluid pad" src="admin/images/<?= $value['image'] ?>" alt="Photo"></a>
-                                        <p><?= substr($value['content'], 0, 200) ?>&nbsp;&nbsp;<a href="blogDetail.php?id=<?= $value['id'] ?>">See more...</a></p>
+                                        <a href="blogDetail.php?id=<?= $value['id'] ?>&pageNo=<?= $pageNo ?>"><img class="img-fluid pad" src="admin/images/<?= $value['image'] ?>" alt="Photo"></a>
+                                        <p><?= substr($value['content'], 0, 200) ?>&nbsp;&nbsp;<a href="blogDetail.php?id=<?= $value['id'] ?>&pageNo=<?= $pageNo ?>">See more...</a></p>
                                     </div>
                                     <!-- /.card-body -->
                                 </div>
@@ -91,7 +91,7 @@ $offset = ($pageNo - 1) * $numsOfPosts;
                         <li class="page-item <?php if ($pageNo >= $totalPages) echo 'disabled' ?>"><a class="page-link" href="index.php?pageNo=<?= $pageNo + 1 ?>">&raquo;</a></li>
                         <li class="page-item <?php if ($pageNo >= $totalPages) echo 'disabled' ?>"><a class="page-link" href="index.php?pageNo=<?= $totalPages ?>">Last</a></li>
                     </ul>
-                </nav> <br><br>
+                </nav>
             </section>
             <!-- /.content -->
 
@@ -101,7 +101,7 @@ $offset = ($pageNo - 1) * $numsOfPosts;
         </div>
         <!-- /.content-wrapper -->
 
-        <footer class="main-footer text-center" style="margin-left: 0 !important;">
+        <footer class="main-footer text-center" style="margin-left: 0 !important;clear:both">
             <div class="float-right d-none d-sm-block ">
                 <a href="logout.php" type="button" class="btn btn-default">Logout</a>
             </div>

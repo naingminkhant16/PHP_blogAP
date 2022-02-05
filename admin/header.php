@@ -1,5 +1,5 @@
 <?php
- 
+
 ?>
 <!DOCTYPE html>
 <!--
@@ -13,7 +13,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-  <title>Blog</title>
+  <title>Admin Panel</title>
 
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="../plugins/fontawesome-free/css/all.min.css">
@@ -36,10 +36,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
       </ul>
 
       <!-- SEARCH FORM -->
-      <form class="form-inline ml-3" action="index.php" method="post">
+      <?php
+      $link = $_SERVER['PHP_SELF'];
+      $linkArr = explode('/', $link);
+      $page = end($linkArr);
+      ?>
+      <form class="form-inline ml-3" action="<?= ($page == 'index.php') ? 'index.php' : 'manageUsers.php'; ?>" method="post">
         <div class="input-group input-group-sm">
-          <input class="form-control form-control-navbar" name="search" type="search" placeholder="Search"
-            aria-label="Search">
+          <input class="form-control form-control-navbar" name="search" type="search" placeholder="Search" aria-label="Search">
           <div class="input-group-append">
             <button class="btn btn-navbar" type="submit">
               <i class="fas fa-search"></i>
@@ -56,9 +60,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <!-- Brand Logo -->
       <a href="index3.html" class="brand-link">
-        <img src="../dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
-          style="opacity: .8">
-        <span class="brand-text font-weight-light">Blog Panel</span>
+        <img src="../dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+        <span class="brand-text font-weight-light">Admin Panel</span>
       </a>
 
       <!-- Sidebar -->
@@ -69,7 +72,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <img src="../dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
           </div>
           <div class="info">
-            <a href="#" class="d-block"><?=$_SESSION['user_name'] ?></a>
+            <a href="#" class="d-block"><?= $_SESSION['user_name'] ?></a>
           </div>
         </div>
 
