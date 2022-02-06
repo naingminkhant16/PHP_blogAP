@@ -4,6 +4,9 @@ require '../config/config.php';
 if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
     header("location: login.php?error=login");
 }
+if ($_SESSION['user_role'] != 1) {
+    header("location: login.php?error=password");
+}
 if (isset($_GET) && $_SESSION['user_role'] == 1) {
     $id = $_GET['id'];
     $role = $_GET['role'];

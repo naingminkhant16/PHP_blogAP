@@ -14,6 +14,7 @@ if ($_POST) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
             $_SESSION['logged_in'] = time();
+            $_SESSION['user_role'] = $user['role'];
             header("location: index.php");
             die();
         } else {
@@ -60,7 +61,7 @@ if ($_POST) {
                 <?php if ($_GET['error'] == 'password') {
                     echo "Incorrect Password!!";
                 } ?>
-                 <?php if ($_GET['error'] == 'login') {
+                <?php if ($_GET['error'] == 'login') {
                     echo "Login Please!";
                 } ?>
             </div>

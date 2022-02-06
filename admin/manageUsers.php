@@ -4,6 +4,9 @@ require '../config/config.php';
 if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
     header("location: login.php?error=login");
 }
+if ($_SESSION['user_role'] != 1) {
+    header("location: login.php?error=password");
+}
 
 ?>
 <?php include 'header.php' ?>
@@ -22,10 +25,10 @@ if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
                         <table class="table table-striped table-dark">
                             <thead>
                                 <tr>
-                                    <th >Id</th>
-                                    <th >Name</th>
-                                    <th >E-mail</th>
-                                    <th >Role</th>
+                                    <th>Id</th>
+                                    <th>Name</th>
+                                    <th>E-mail</th>
+                                    <th>Role</th>
                                     <th style="width: 30%">Actions</th>
                                 </tr>
                             </thead>

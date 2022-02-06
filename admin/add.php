@@ -4,6 +4,9 @@ require '../config/config.php';
 if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
     header("location: login.php");
 }
+if ($_SESSION['user_role'] != 1) {
+    header("location: login.php?error=password");
+}
 if ($_POST) {
     $filePath = 'images/' . $_FILES['image']['name'];
     $imageType = pathinfo($filePath, PATHINFO_EXTENSION);

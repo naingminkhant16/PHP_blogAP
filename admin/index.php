@@ -4,7 +4,17 @@ require '../config/config.php';
 if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
   header("location: login.php?error=login");
 }
-
+if ($_SESSION['user_role'] != 1) {
+  header("location: login.php?error=password");
+}
+if (isset($_POST['search'])) {
+  setcookie('search', $_POST['search'], time() + (86400 * 30), "/"); // 86400 = 1 day
+} else {
+  if (empty($_GET['pageNo'])) {
+    unset($_COOKIE['search']);
+    setcookie('search', null, -1, '/');
+  }
+}
 ?>
 <?php include 'header.php'; ?>
 
@@ -39,7 +49,7 @@ if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
                 $numOfrecs = 2;
                 //algorithm to find offset value 
                 $offset = ($pageNo - 1) * $numOfrecs;
-                if (empty($_POST['search'])) {
+                if (empty($_POST['search']) && empty($_COOKIE['search'])) {
                   ////pdo section
                   $statement = $pdo->prepare("SELECT * FROM posts ORDER BY id desc");
                   $statement->execute();
@@ -53,7 +63,7 @@ if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
                 } else {
                   ////find Search value from search bar
                   ////pdo section
-                  $searchKey = $_POST['search'];
+                  $searchKey = isset($_POST['search']) ? $_POST['search'] : $_COOKIE['search'];
                   $statement = $pdo->prepare("SELECT * FROM posts WHERE title LIKE '%$searchKey%' ORDER BY id desc");
                   $statement->execute();
                   $RawResult = $statement->fetchALl();
