@@ -8,30 +8,45 @@ if ($_SESSION['user_role'] != 1) {
     header("location: login.php?error=password");
 }
 if ($_POST) {
-    if ($_POST['admin']) {
-        $role = 1;
-    } else {
-        $role = 0;
-    }
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
 
-    $statement = $pdo->prepare("SELECT * FROM users WHERE email=:email");
-    $statement->execute([':email' => $email]);
-    $user = $statement->fetchAll();
-    if ($user) {
-        echo "<script>alert('Email already exist! Try again.');window.location.href='manageUsers.php'</script>";
+    if (empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password']) || strlen($_POST['password']) < 6) {
+        if (empty($_POST['name'])) {
+            $nameError = "Name is required";
+        }
+        if (empty($_POST['email'])) {
+            $emailError = "Email is required";
+        }
+        if (empty($_POST['password'])) {
+            $passwordError = "Password is required";
+        } elseif (strlen($_POST['password']) < 6) {
+            $passwordError = "Password must have atleast 6 characters";
+        }
     } else {
-        $statement = $pdo->prepare("INSERT INTO users(name,email,password,role) VALUES (:name,:email,:password,:role)");
-        $result = $statement->execute([
-            ':name' => $name,
-            ':email' => $email,
-            ':password' => $password,
-            ':role' => $role
-        ]);
-        if ($result) {
-            echo "<script>alert('Successfully added User');window.location.href='manageUsers.php'</script>";
+        if ($_POST['admin']) {
+            $role = 1;
+        } else {
+            $role = 0;
+        }
+        $name = $_POST['name'];
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+
+        $statement = $pdo->prepare("SELECT * FROM users WHERE email=:email");
+        $statement->execute([':email' => $email]);
+        $user = $statement->fetchAll();
+        if ($user) {
+            echo "<script>alert('Email already exist! Try again.');window.location.href='manageUsers.php'</script>";
+        } else {
+            $statement = $pdo->prepare("INSERT INTO users(name,email,password,role) VALUES (:name,:email,:password,:role)");
+            $result = $statement->execute([
+                ':name' => $name,
+                ':email' => $email,
+                ':password' => $password,
+                ':role' => $role
+            ]);
+            if ($result) {
+                echo "<script>alert('Successfully added User');window.location.href='manageUsers.php'</script>";
+            }
         }
     }
 }
@@ -54,14 +69,17 @@ if ($_POST) {
                         <form action="createUser.php" class="" method="POST" enctype="multipart/form-data">
                             <div class="form-group">
                                 <label type="text" class="form-label">Name</label>
+                                <p style="color:red"><?= isset($nameError) ? '*' . $nameError : '' ?></p>
                                 <input type="text" class="form-control" name='name' required>
                             </div>
                             <div class="form-group">
                                 <label type="text" class="form-label">E-mail</label>
+                                <p style="color:red"><?= isset($emailError) ? '*' . $emailError : '' ?></p>
                                 <input type="email" class="form-control" name='email' required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Password</label>
+                                <p style="color:red"><?= isset($passwordError) ? '*' . $passwordError : '' ?></p>
                                 <input type="password" name="password" class="form-control" required>
                             </div>
                             <div class="form-check form-group">

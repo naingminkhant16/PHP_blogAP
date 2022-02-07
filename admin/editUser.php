@@ -15,31 +15,47 @@ if ($_GET) {
 }
 
 if ($_POST) {
-    if (isset($_POST['admin'])) {
-        $role = 1;
+    if (empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password']) || strlen($_POST['password']) < 6) {
+        if (empty($_POST['name'])) {
+            $nameError = "Name is required";
+        }
+        if (empty($_POST['email'])) {
+            $emailError = "Email is required";
+        }
+        if (empty($_POST['password'])) {
+            $passwordError = "Password is required";
+        } elseif (strlen($_POST['password']) < 6) {
+            $passwordError = "Password must have atleast 6 characters";
+        }
     } else {
-        $role = 0;
-    }
-    $id = $_POST['id'];
-    $name = $_POST['name'];
-    $email = $_POST['email'];
+        if (isset($_POST['admin'])) {
+            $role = 1;
+        } else {
+            $role = 0;
+        }
+        $id = $_POST['id'];
+        $name = $_POST['name'];
+        $email = $_POST['email'];
+        $password = $_POST['password'];
 
-    $statement = $pdo->prepare("SELECT * FROM users WHERE email=:email and id!=:id");
-    $statement->execute([':email' => $email, ':id' => $id]);
-    $user = $statement->fetchAll();
+        $statement = $pdo->prepare("SELECT * FROM users WHERE email=:email and id!=:id");
+        $statement->execute([':email' => $email, ':id' => $id]);
+        $user = $statement->fetchAll();
 
-    if ($user) {
-        echo "<script>alert('Email duplicated! Try again.');window.location.href='manageUsers.php'</script>";
-    } else {
-        $statement = $pdo->prepare("UPDATE users SET name=:name,email=:email,role=:role WHERE id=:id");
-        $result = $statement->execute([
-            ':name' => $name,
-            ':email' => $email,
-            ':role' => $role,
-            ':id' => $id
-        ]);
-        if ($result) {
-            echo "<script>alert('Successfully Updated UserData');window.location.href='manageUsers.php'</script>";
+        if ($user) {
+            echo "<script>alert('Email duplicated! Try again.');window.location.href='manageUsers.php'</script>";
+        } else {
+            $statement = $pdo->prepare("UPDATE users SET name=:name,email=:email,password=:password,role=:role WHERE id=:id");
+            $result = $statement->execute([
+                ':name' => $name,
+                ':email' => $email,
+                ':password' => $password,
+                ':role' => $role,
+                ':id' => $id
+            ]);
+            if ($result) {
+                echo "<script>alert('Successfully Updated UserData');window.location.href='manageUsers.php'</script>";
+            }
         }
     }
 }
@@ -58,15 +74,22 @@ if ($_POST) {
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
-                        <form action="editUser.php" class="" method="POST" enctype="multipart/form-data">
+                        <form action="" class="" method="POST" enctype="multipart/form-data">
                             <input type="hidden" class="form-control" name='id' value="<?= $result->id ?>">
                             <div class="form-group">
                                 <label type="text" class="form-label">Name</label>
+                                <p style="color:red"> <?= isset($nameError) ? '*' . $nameError : '' ?></p>
                                 <input type="text" class="form-control" name='name' value="<?= $result->name ?>" required>
                             </div>
                             <div class="form-group">
                                 <label type="text" class="form-label">E-mail</label>
+                                <p style="color:red"> <?= isset($emailError) ? '*' . $emailError : '' ?></p>
                                 <input type="email" class="form-control" name='email' value="<?= $result->email ?>" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Password</label>
+                                <p style="color:red"><?= isset($passwordError) ? '*' . $passwordError : '' ?></p>
+                                <input type="password" name="password" class="form-control" value="<?= $result->password ?>" required>
                             </div>
                             <div class="form-check form-group">
                                 <input type="checkbox" class="form-check-input" name="admin" value="1">

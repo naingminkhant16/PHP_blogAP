@@ -13,34 +13,43 @@ $statement->execute([':id' => $_GET['id']]);
 $result = $statement->fetch(PDO::FETCH_OBJ);
 
 if ($_POST) {
-    if (!$_FILES['image']['error']) {
+    if (empty($_POST['title']) || empty($_POST['content'])) {
+        if (empty($_POST['title'])) {
+            $titleError = "Title is required";
+        }
+        if (empty($_POST['content'])) {
+            $contentError = "Content is required";
+        }
+    } else {
+        if (!$_FILES['image']['error']) {
 
-        $filePath = 'images/' . $_FILES['image']['name'];
-        $imageType = pathinfo($filePath, PATHINFO_EXTENSION);
-        if ($imageType !== 'png' && $imageType !== 'jpg' && $imageType !== 'jpeg') {
-            echo "<script>alert('Image type must be png,jpg or jpeg')</script>";
+            $filePath = 'images/' . $_FILES['image']['name'];
+            $imageType = pathinfo($filePath, PATHINFO_EXTENSION);
+            if ($imageType !== 'png' && $imageType !== 'jpg' && $imageType !== 'jpeg') {
+                echo "<script>alert('Image type must be png,jpg or jpeg')</script>";
+            } else {
+                move_uploaded_file($_FILES['image']['tmp_name'], $filePath);
+                $updateStatement = $pdo->prepare("UPDATE posts SET title=:title,content=:content,image=:image WHERE id=:id");
+                $response = $updateStatement->execute([
+                    ':title' => $_POST['title'],
+                    ':content' => $_POST['content'],
+                    ':image' => $_FILES['image']['name'],
+                    ':id' => $_POST['id']
+                ]);
+                if ($response) {
+                    echo "<script>alert('Successfully Updated Post');window.location.href='index.php'</script>";
+                }
+            }
         } else {
-            move_uploaded_file($_FILES['image']['tmp_name'], $filePath);
-            $updateStatement = $pdo->prepare("UPDATE posts SET title=:title,content=:content,image=:image WHERE id=:id");
+            $updateStatement = $pdo->prepare("UPDATE posts SET title=:title,content=:content WHERE id=:id");
             $response = $updateStatement->execute([
                 ':title' => $_POST['title'],
                 ':content' => $_POST['content'],
-                ':image' => $_FILES['image']['name'],
                 ':id' => $_POST['id']
             ]);
             if ($response) {
                 echo "<script>alert('Successfully Updated Post');window.location.href='index.php'</script>";
             }
-        }
-    } else {
-        $updateStatement = $pdo->prepare("UPDATE posts SET title=:title,content=:content WHERE id=:id");
-        $response = $updateStatement->execute([
-            ':title' => $_POST['title'],
-            ':content' => $_POST['content'],
-            ':id' => $_POST['id']
-        ]);
-        if ($response) {
-            echo "<script>alert('Successfully Updated Post');window.location.href='index.php'</script>";
         }
     }
 }
@@ -59,20 +68,23 @@ if ($_POST) {
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
-                        <form action="edit.php" class="" method="POST" enctype="multipart/form-data">
+                        <form action="" class="" method="POST" enctype="multipart/form-data">
                             <input type="hidden" class="form-control" name='id' value="<?= $result->id ?>">
                             <div class="form-group">
                                 <label type="text" class="form-label">Title</label>
+                                <p style="color:red"><?= isset($titleError) ? '*' . $titleError : '' ?></p>
                                 <input type="text" class="form-control" name='title' value="<?= $result->title ?>" required>
                             </div>
                             <div class="form-group">
                                 <label type="text" class="form-label">Content</label>
+                                <p style="color:red"><?= isset($contentError) ? '*' . $contentError : '' ?></p>
                                 <textarea name="content" rows="5" class="form-control" required><?= $result->content ?></textarea>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Image</label><br>
+                                <p style="color:red"><?= isset($imageError) ? '*' . $imageError : '' ?></p>
                                 <img src="images/<?= $result->image ?>" width="400" height="200"><br><br>
-                                <input type="file" name="image" class="form-control">
+                                <input type="file" name="image" class="form-control" required>
                             </div>
                             <div class="form-group">
                                 <input type="submit" value="SUBMIT" class="btn btn-primary">

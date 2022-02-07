@@ -8,21 +8,33 @@ if ($_SESSION['user_role'] != 1) {
     header("location: login.php?error=password");
 }
 if ($_POST) {
-    $filePath = 'images/' . $_FILES['image']['name'];
-    $imageType = pathinfo($filePath, PATHINFO_EXTENSION);
-    if ($imageType !== 'png' && $imageType !== 'jpg' && $imageType !== 'jpeg') {
-        echo "<script>alert('Image type must be png,jpg or jpeg')</script>";
+    if (empty($_POST['title']) || empty($_POST['content']) || empty($_FILES['image'])) {
+        if (empty($_POST['title'])) {
+            $titleError = "Title is required";
+        }
+        if (empty($_POST['content'])) {
+            $contentError = "Content is required";
+        }
+        if (empty($_FILES['image'])) {
+            $imageError = "Image cannot be null";
+        }
     } else {
-        move_uploaded_file($_FILES['image']['tmp_name'], $filePath);
-        $statement = $pdo->prepare("INSERT INTO posts(title,content,image,author_id) VALUES (:title,:content,:image,:author_id)");
-        $result = $statement->execute([
-            ':title' => $_POST['title'],
-            ':content' => $_POST['content'],
-            ':image' => $_FILES['image']['name'],
-            ':author_id' => $_SESSION['user_id']
-        ]);
-        if ($result) {
-            echo "<script>alert('Successfully Uploaded Post');window.location.href='index.php'</script>";
+        $filePath = 'images/' . $_FILES['image']['name'];
+        $imageType = pathinfo($filePath, PATHINFO_EXTENSION);
+        if ($imageType !== 'png' && $imageType !== 'jpg' && $imageType !== 'jpeg') {
+            echo "<script>alert('Image type must be png,jpg or jpeg')</script>";
+        } else {
+            move_uploaded_file($_FILES['image']['tmp_name'], $filePath);
+            $statement = $pdo->prepare("INSERT INTO posts(title,content,image,author_id) VALUES (:title,:content,:image,:author_id)");
+            $result = $statement->execute([
+                ':title' => $_POST['title'],
+                ':content' => $_POST['content'],
+                ':image' => $_FILES['image']['name'],
+                ':author_id' => $_SESSION['user_id']
+            ]);
+            if ($result) {
+                echo "<script>alert('Successfully Uploaded Post');window.location.href='index.php'</script>";
+            }
         }
     }
 }
@@ -44,18 +56,21 @@ if ($_POST) {
                         <form action="add.php" class="" method="POST" enctype="multipart/form-data">
                             <div class="form-group">
                                 <label type="text" class="form-label">Title</label>
+                                <p style="color:red"><?= isset($titleError) ? '*' . $titleError : '' ?></p>
                                 <input type="text" class="form-control" name='title' required>
                             </div>
                             <div class="form-group">
                                 <label type="text" class="form-label">Content</label>
+                                <p style="color:red"><?= isset($contentError) ?  '*' . $contentError : '' ?></p>
                                 <textarea name="content" rows="5" class="form-control" required></textarea>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Image</label>
+                                <p style="color:red"><?= isset($imageError) ? '*' . $imageError : '' ?></p>
                                 <input type="file" name="image" class="form-control" required>
                             </div>
                             <div class="form-group">
-                                <input type="submit" value="SUBMIT" class="btn btn-primary">
+                                <input type="submit" value="SUBMIT" class="btn btn-primary" required>
                                 <a href="index.php" type="button" class="btn btn-default">Back</a>
                             </div>
                         </form>
