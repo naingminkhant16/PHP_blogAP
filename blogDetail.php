@@ -23,15 +23,19 @@ $comments = $cmtstatement->fetchAll(PDO::FETCH_OBJ);
 
 //insert comments
 if ($_POST) {
-    $comment = $_POST['comment'];
-    $statement = $pdo->prepare("INSERT INTO comments(content,author_id,post_id) VALUES (:content,:author_id,:post_id)");
-    $result = $statement->execute([
-        ':content' => $comment,
-        ':author_id' => $_SESSION['user_id'],
-        ':post_id' => $id
-    ]);
-    if ($result) {
-        header("location: blogDetail.php?id=" . $id);
+    if (empty($_POST['comment'])) {
+        $commentError = 'Comment cannot be null!';
+    } else {
+        $comment = $_POST['comment'];
+        $statement = $pdo->prepare("INSERT INTO comments(content,author_id,post_id) VALUES (:content,:author_id,:post_id)");
+        $result = $statement->execute([
+            ':content' => $comment,
+            ':author_id' => $_SESSION['user_id'],
+            ':post_id' => $id
+        ]);
+        if ($result) {
+            header("location: blogDetail.php?id=" . $id);
+        }
     }
 }
 ?>
@@ -108,6 +112,7 @@ if ($_POST) {
                             <!-- /.card-footer -->
                             <div class="card-footer">
                                 <form action="" method="post">
+                                    <small style="color:red"><?= isset($commentError) ? '*' . $commentError : '' ?></small>
                                     <div class="img-push">
                                         <input type="text" class="form-control form-control-sm" name="comment" placeholder="Press enter to post comment">
                                     </div>

@@ -2,25 +2,39 @@
 session_start();
 require 'config/config.php';
 if ($_POST) {
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-
-    $statement = $pdo->prepare('SELECT * FROM users WHERE email=:email');
-    $statement->bindValue(':email', $email);
-    $statement->execute();
-    $user = $statement->fetch(PDO::FETCH_ASSOC);
-    if ($user) {
-        echo "<script>alert('Your account is already created! Please Login.')</script>";
+    if (empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password']) || strlen($_POST['password']) < 6) {
+        if (empty($_POST['name'])) {
+            $nameError = "Name is required";
+        }
+        if (empty($_POST['email'])) {
+            $emailError = "Email is required";
+        }
+        if (empty($_POST['password'])) {
+            $passwordError = "Password is required";
+        } elseif (strlen($_POST['password']) < 6) {
+            $passwordError = "Password must have atleast 6 characters";
+        }
     } else {
-        $statement = $pdo->prepare("INSERT INTO users(name,email,password) VALUES (:name,:email,:password)");
-        $result = $statement->execute([
-            ':name' => $name,
-            ':email' => $email,
-            ':password' => $password
-        ]);
-        if ($result) {
-            echo "<script>alert('Successfully created account');window.location.href='login.php'</script>";
+        $name = $_POST['name'];
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+
+        $statement = $pdo->prepare('SELECT * FROM users WHERE email=:email');
+        $statement->bindValue(':email', $email);
+        $statement->execute();
+        $user = $statement->fetch(PDO::FETCH_ASSOC);
+        if ($user) {
+            echo "<script>alert('Your account is already created! Please Login.')</script>";
+        } else {
+            $statement = $pdo->prepare("INSERT INTO users(name,email,password) VALUES (:name,:email,:password)");
+            $result = $statement->execute([
+                ':name' => $name,
+                ':email' => $email,
+                ':password' => $password
+            ]);
+            if ($result) {
+                echo "<script>alert('Successfully created account');window.location.href='login.php'</script>";
+            }
         }
     }
 }
@@ -58,6 +72,7 @@ if ($_POST) {
                 <p class="login-box-msg">Create New Account</p>
 
                 <form action="register.php" method="POST">
+                    <p style="color:red"><?= isset($nameError) ? '*' . $nameError : '' ?></p>
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" name="name" placeholder="Name">
                         <div class="input-group-append">
@@ -66,6 +81,7 @@ if ($_POST) {
                             </div>
                         </div>
                     </div>
+                    <p style="color:red"><?= isset($emailError) ? '*' . $emailError : '' ?></p>
                     <div class="input-group mb-3">
                         <input type="email" class="form-control" name="email" placeholder="Email">
                         <div class="input-group-append">
@@ -74,13 +90,14 @@ if ($_POST) {
                             </div>
                         </div>
                     </div>
+                    <p style="color:red"><?= isset($passwordError) ? '*' . $passwordError : '' ?></p>
                     <div class="input-group mb-3">
                         <input type="password" class="form-control" name="password" placeholder="Password">
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-lock"></span>
                             </div>
-                        </div>
+                        </div><br>
                     </div>
                     <div class="row">
                         <!-- /.col -->
