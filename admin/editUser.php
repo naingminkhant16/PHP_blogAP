@@ -15,17 +15,12 @@ if ($_GET) {
 }
 
 if ($_POST) {
-    if (empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password']) || strlen($_POST['password']) < 6) {
+    if (empty($_POST['name']) || empty($_POST['email'])) {
         if (empty($_POST['name'])) {
             $nameError = "Name is required";
         }
         if (empty($_POST['email'])) {
             $emailError = "Email is required";
-        }
-        if (empty($_POST['password'])) {
-            $passwordError = "Password is required";
-        } elseif (strlen($_POST['password']) < 6) {
-            $passwordError = "Password must have atleast 6 characters";
         }
     } else {
         if (isset($_POST['admin'])) {
@@ -36,7 +31,16 @@ if ($_POST) {
         $id = $_POST['id'];
         $name = $_POST['name'];
         $email = $_POST['email'];
-        $password = $_POST['password'];
+        if ($_POST['password']) {
+            if (strlen($_POST['password']) < 6) {
+                echo "<script>confirm('Password should have atleast 6 characters! Are you sure you want to continue?');window.location.href='manageUsers.php'</script>";
+                $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+            } else {
+                $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+            }
+        } else {
+            $password = $_POST['currentPassword'];
+        }
 
         $statement = $pdo->prepare("SELECT * FROM users WHERE email=:email and id!=:id");
         $statement->execute([':email' => $email, ':id' => $id]);
@@ -89,7 +93,8 @@ if ($_POST) {
                             <div class="form-group">
                                 <label class="form-label">Password</label>
                                 <p style="color:red"><?= isset($passwordError) ? '*' . $passwordError : '' ?></p>
-                                <input type="password" name="password" class="form-control" value="<?= $result->password ?>" required>
+                                <input type="password" name="password" class="form-control" placeholder="Current Password is exist.Type to change new Password.">
+                                <input type="hidden" class="form-control" name='currentPassword' value="<?= $result->password ?>">
                             </div>
                             <div class="form-check form-group">
                                 <input type="checkbox" class="form-check-input" name="admin" value="1">
