@@ -1,6 +1,7 @@
 <?php
 session_start();
 require '../config/config.php';
+require '../config/common.php';
 if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
     header("location: login.php");
 }
@@ -22,7 +23,7 @@ if ($_POST) {
             $passwordError = "Password must have atleast 6 characters";
         }
     } else {
-        if ($_POST['admin']) {
+        if (isset($_POST['admin'])) {
             $role = 1;
         } else {
             $role = 0;
@@ -30,7 +31,7 @@ if ($_POST) {
         $name = $_POST['name'];
         $email = $_POST['email'];
         $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-        
+
         $statement = $pdo->prepare("SELECT * FROM users WHERE email=:email");
         $statement->execute([':email' => $email]);
         $user = $statement->fetchAll();
@@ -67,6 +68,7 @@ if ($_POST) {
                     <!-- /.card-header -->
                     <div class="card-body">
                         <form action="createUser.php" class="" method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="_token" class="form-control" value="<?= $_SESSION['_token'] ?>">
                             <div class="form-group">
                                 <label type="text" class="form-label">Name</label>
                                 <p style="color:red"><?= isset($nameError) ? '*' . $nameError : '' ?></p>
