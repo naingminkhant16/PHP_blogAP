@@ -42,6 +42,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       $page = end($linkArr);
       ?>
       <form class="form-inline ml-3" action="<?= ($page == 'index.php') ? 'index.php' : 'manageUsers.php'; ?>" method="post">
+        <input type="hidden" name="_token" class="form-control" value="<?= $_SESSION['_token'] ?>">
         <div class="input-group input-group-sm">
           <input class="form-control form-control-navbar" name="search" type="search" placeholder="Search" aria-label="Search">
           <div class="input-group-append">
