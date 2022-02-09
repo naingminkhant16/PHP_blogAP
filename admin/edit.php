@@ -75,12 +75,12 @@ if ($_POST) {
                             <div class="form-group">
                                 <label type="text" class="form-label">Title</label>
                                 <p style="color:red"><?= isset($titleError) ? '*' . $titleError : '' ?></p>
-                                <input type="text" class="form-control" name='title' value="<?= $result->title ?>" required>
+                                <input type="text" class="form-control" name='title' value="<?= escape($result->title) ?>" required>
                             </div>
                             <div class="form-group">
                                 <label type="text" class="form-label">Content</label>
                                 <p style="color:red"><?= isset($contentError) ? '*' . $contentError : '' ?></p>
-                                <textarea name="content" rows="5" class="form-control" required><?= $result->content ?></textarea>
+                                <textarea name="content" rows="5" class="form-control" required><?= escape($result->content) ?></textarea>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Image</label><br>

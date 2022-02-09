@@ -1,6 +1,7 @@
 <?php
 session_start();
 require '../config/config.php';
+require '../config/common.php';
 if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
     header("location: login.php?error=login");
 }
@@ -49,8 +50,8 @@ if ($_SESSION['user_role'] != 1) {
                                     foreach ($result as $user) : ?>
                                         <tr>
                                             <th scope="row"><?= $user->id ?></th>
-                                            <td><?= $user->name ?></td>
-                                            <td><?= $user->email ?></td>
+                                            <td><?= escape($user->name) ?></td>
+                                            <td><?= escape($user->email) ?></td>
                                             <td><?php if ($user->role > 0) {
                                                     echo 'Admin';
                                                 } else {

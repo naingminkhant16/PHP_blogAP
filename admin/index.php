@@ -1,6 +1,7 @@
 <?php
 session_start();
 require '../config/config.php';
+require '../config/common.php';
 if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
   header("location: login.php?error=login");
 }
@@ -80,9 +81,9 @@ if (isset($_POST['search'])) {
                 ?>
                     <tr>
                       <td><?= $i ?></td>
-                      <td><?= $value['title'] ?></td>
+                      <td><?= escape($value['title']) ?></td>
                       <td>
-                        <p><?= substr($value['content'], 0, 100) ?></p>
+                        <p><?= escape(substr($value['content'], 0, 100)) ?></p>
                       </td>
                       <td>
                         <div class="d-flex">

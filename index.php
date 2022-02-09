@@ -1,6 +1,7 @@
 <?php
 session_start();
 require 'config/config.php';
+require 'config/common.php';
 if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
     header("location: login.php?error=login");
 }
@@ -64,12 +65,12 @@ $offset = ($pageNo - 1) * $numsOfPosts;
                                 <div class="card card-widget">
                                     <div class="card-header">
                                         <div class="card-title" style="float: none;">
-                                            <h4 class="text-center"><a style="color:#272727" href="blogDetail.php?id=<?= $value['id'] ?>&pageNo=<?= $pageNo ?>"><?= $value['title'] ?></a></h4>
+                                            <h4 class="text-center"><a style="color:#272727" href="blogDetail.php?id=<?= $value['id'] ?>&pageNo=<?= $pageNo ?>"><?= escape($value['title']) ?></a></h4>
                                         </div>
                                     </div>
                                     <div class="card-body">
                                         <a href="blogDetail.php?id=<?= $value['id'] ?>&pageNo=<?= $pageNo ?>"><img class="img-fluid pad" src="admin/images/<?= $value['image'] ?>" alt="Photo"></a>
-                                        <p><?= substr($value['content'], 0, 200) ?>&nbsp;&nbsp;<a href="blogDetail.php?id=<?= $value['id'] ?>&pageNo=<?= $pageNo ?>">See more...</a></p>
+                                        <p><?= escape(substr($value['content'], 0, 200)) ?>&nbsp;&nbsp;<a href="blogDetail.php?id=<?= $value['id'] ?>&pageNo=<?= $pageNo ?>">See more...</a></p>
                                     </div>
                                     <!-- /.card-body -->
                                 </div>

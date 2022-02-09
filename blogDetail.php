@@ -74,12 +74,12 @@ if ($_POST) {
                         <div class="card card-widget">
                             <!-- /.card-header -->
                             <div class="card-header text-center">
-                                <h2><?= $result['title'] ?></h2>
+                                <h2><?= escape($result['title']) ?></h2>
                             </div>
                             <div class="card-body">
                                 <img class="img-fluid pad" src="admin/images/<?= $result['image'] ?>" alt="Photo">
                                 <br><br>
-                                <p><?= $result['content'] ?></p>
+                                <p><?= escape($result['content']) ?></p>
                                 <h2>Comments</h2>
                                 <hr>
                             </div>
@@ -101,9 +101,9 @@ if ($_POST) {
                                         <div class="comment-text" style="margin-left: 0 !important;">
                                             <span class="username">
                                                 <?= $authorName->name ?>
-                                                <span class="text-muted float-right"><?= $comment->created_at ?></span>
+                                                <span class="text-muted float-right"><?= escape($comment->created_at) ?></span>
                                             </span><!-- /.username -->
-                                            <?= $comment->content ?>
+                                            <?= escape($comment->content) ?>
                                         </div>
                                         <!-- /.comment-text -->
                                     </div>

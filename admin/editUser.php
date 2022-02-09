@@ -85,18 +85,18 @@ if ($_POST) {
                             <div class="form-group">
                                 <label type="text" class="form-label">Name</label>
                                 <p style="color:red"> <?= isset($nameError) ? '*' . $nameError : '' ?></p>
-                                <input type="text" class="form-control" name='name' value="<?= $result->name ?>" required>
+                                <input type="text" class="form-control" name='name' value="<?= escape($result->name) ?>" required>
                             </div>
                             <div class="form-group">
                                 <label type="text" class="form-label">E-mail</label>
                                 <p style="color:red"> <?= isset($emailError) ? '*' . $emailError : '' ?></p>
-                                <input type="email" class="form-control" name='email' value="<?= $result->email ?>" required>
+                                <input type="email" class="form-control" name='email' value="<?= escape($result->email) ?>" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Password</label>
                                 <p style="color:red"><?= isset($passwordError) ? '*' . $passwordError : '' ?></p>
                                 <input type="password" name="password" class="form-control" placeholder="Current Password is exist.Type to change new Password.">
-                                <input type="hidden" class="form-control" name='currentPassword' value="<?= $result->password ?>">
+                                <input type="hidden" class="form-control" name='currentPassword' value="<?= escape($result->password) ?>">
                             </div>
                             <div class="form-check form-group">
                                 <input type="checkbox" class="form-check-input" name="admin" value="1">
