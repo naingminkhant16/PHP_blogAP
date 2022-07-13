@@ -45,8 +45,8 @@ $offset = ($pageNo - 1) * $numsOfPosts;
                 </div>
             </section>
 
-            <section class="content container">
-                <div class="row">
+            <section class="content container w-50">
+                <div class="row align-items-center ">
                     <?php
                     $statement = $pdo->prepare("SELECT * FROM posts");
                     $statement->execute();
@@ -60,7 +60,7 @@ $offset = ($pageNo - 1) * $numsOfPosts;
                     if ($result) :
                         foreach ($result as $value) :
                     ?>
-                            <div class="col-md-6">
+                            <div class="col-lg-6">
                                 <!-- Box Comment -->
                                 <div class="card card-widget">
                                     <div class="card-header">
@@ -69,7 +69,8 @@ $offset = ($pageNo - 1) * $numsOfPosts;
                                         </div>
                                     </div>
                                     <div class="card-body">
-                                        <a href="blogDetail.php?id=<?= $value['id'] ?>&pageNo=<?= $pageNo ?>"><img class="img-fluid pad" src="admin/images/<?= $value['image'] ?>" alt="Photo"></a>
+                                        <div class="text-center mb-3"><a href="blogDetail.php?id=<?= $value['id'] ?>&pageNo=<?= $pageNo ?>">
+                                                <img class="img-fluid" src="admin/images/<?= $value['image'] ?>" alt="Photo"></a></div>
                                         <p><?= escape(substr($value['content'], 0, 200)) ?>&nbsp;&nbsp;<a href="blogDetail.php?id=<?= $value['id'] ?>&pageNo=<?= $pageNo ?>">See more...</a></p>
                                     </div>
                                     <!-- /.card-body -->
